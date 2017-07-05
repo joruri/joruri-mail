@@ -24,11 +24,11 @@
   </tr>
   <% if @item.friendly_cc_addrs.present? %><tr>
     <th>Cc</th>
-    <td class="autoWrap"><%= @item.friendly_cc_addrs.join('，') %></td>
+    <td class="autoWrap"><%= @item.friendly_cc_addrs.join(', ') %></td>
   </tr><% end %>
   <% if @item.friendly_bcc_addrs.present? %><tr>
     <th>Bcc</th>
-    <td class="autoWrap"><%= @item.friendly_bcc_addrs.join('，') %></td>
+    <td class="autoWrap"><%= @item.friendly_bcc_addrs.join(', ') %></td>
   </tr><% end %>
   <tr>
     <th>件名</th>
