@@ -3,10 +3,11 @@
 <script type="text/javascript">
 //<![CDATA[
 $(function() {
-  var baseUrl = '<%=raw escape_javascript URI::Generic.build(
-    path: request.path,
-    query: request.query_parameters.present? ? request.query_parameters.except(:reload).to_query : nil
-  ).to_s %>';
+  <%-
+  uri = Addressable::URI.new(path: request.path,
+                             query_values: request.query_parameters.present? ? request.query_parameters.except(:reload) : nil).to_s
+  -%>
+  var baseUrl = '<%=raw escape_javascript uri.to_s %>';
   setInterval(function() {
     $('#refresh_notice').show();
     document.location.href = baseUrl;
