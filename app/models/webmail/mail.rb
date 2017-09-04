@@ -455,7 +455,8 @@ class Webmail::Mail
     end
 
     def load_from_cache(mailbox, uids)
-      nodes = Webmail::MailNode.where(user_id: Core.current_user.id, mailbox: mailbox, uid: uids).all
+      nodes = Webmail::MailNode.where(user_id: Core.current_user.id, mailbox: mailbox, uid: uids)
+                               .group(:uid).all
       return [] if nodes.blank?
 
       msgs = imap.uid_fetch(nodes.map(&:uid), ['UID', 'FLAGS']).to_a

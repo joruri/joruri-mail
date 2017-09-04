@@ -1,6 +1,6 @@
 module Mail
   module ContentTypeElementFix
-    def initialize( string )
+    def initialize(string)
       string = Sanitizer.adjust_semicolon(string)
       string = Sanitizer.adjust_encoding(string)
       string = Sanitizer.adjust_quotation(string)
@@ -10,18 +10,18 @@ module Mail
 
       begin
         super(string)
-      rescue Mail::Field::ParseError => e
+      rescue => e
         warn e.message
         fallback_content_type(e.value)
       end
     end
+
     def fallback_content_type(value)
-      value = value.force_encoding('utf-8').encode('utf-8', invalid: :replace, undef: :replace)
       if value =~ %r{^([^/]+?)/([^/]+?);\s*name\s*=\s*(.+)$}im
         # matches to 'text/plain; name=***'
         @main_type = $1
         @sub_type = $2
-        @parameters = ['name' => $3]
+        @parameters = ['name' => Mail::Sanitizer.encode_with_charset_detection($3)]
       elsif value =~ %r{^([^/]+?)/([^/]+?)(;|$)}im
         # matches to 'text/plain' without name parameter
         @main_type = $1
@@ -29,14 +29,15 @@ module Mail
       else
         @main_type = 'application'
         @sub_type = 'unknown'
-        @parameters = ['name' => value]
+        @parameters = ['name' => Mail::Sanitizer.encode_with_charset_detection(value)]
       end
     rescue
       @main_type = 'application'
       @sub_type = 'unknown'
-      @parameters = ['name' => value]
+      @parameters = ['name' => Mail::Sanitizer.encode_with_charset_detection(value)]
     end
   end
+
   class ContentTypeElement
     prepend ContentTypeElementFix
   end

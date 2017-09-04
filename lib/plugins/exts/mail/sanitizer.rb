@@ -11,17 +11,14 @@ module Mail
         param = $1
         filename = $2
         delim = $3
-        #charset = NKF.guess(filename).to_s.downcase
-        charset = CharlockHolmes::EncodingDetector.detect(filename)[:encoding].downcase
+        next match if filename =~ /\=\?(.+)?\?[BQ]\?(.*)\?\=/im
 
-        if filename !~ /\=\?(.+)?\?[BQ]\?(.*)\?\=/im && !charset.in?(['iso-8859-1', 'us-ascii', 'ascii-8bit'])
-          encoded, encoding = RubyVer.b_value_encode(filename.force_encoding(charset))
-          encoded = encoded.gsub(/[\r\n]/, '')
-          %Q|#{param}="=?#{charset.upcase}?B?#{encoded}?="#{delim}|
-        else
-          match
-        end
+        encoded = encode_with_charset_detection(filename)
+        %Q|#{param}="#{encoded}"#{delim}|
       end
+    rescue => e
+      warn_log e
+      value
     end
 
     def self.adjust_quotation(value)
@@ -59,6 +56,16 @@ module Mail
 
     def self.adjust_invalid_content_transfer_encoding(value)
       value.gsub(/\s*Content-Transfer-Encoding: 8bit\s*(;|$)/m, '')
+    end
+
+    def self.encode_with_charset_detection(string)
+      #charset = NKF.guess(filename).to_s.downcase
+      charset = CharlockHolmes::EncodingDetector.detect(string)[:encoding].downcase
+      return string unless (Encoding.find(charset) rescue nil)
+      return string if string.ascii_only? && charset !~ /^iso-2022-jp/
+      Encodings.b_value_encode(string.force_encoding(charset))
+    rescue
+      string
     end
   end
 end
