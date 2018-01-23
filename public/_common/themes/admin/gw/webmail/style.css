@@ -565,6 +565,7 @@ form.search td input.email {
 #webmailContent .menu a.unseen,
 #webmailContent .menu a.spam,
 #webmailContent .menu a.label,
+#webmailContent .menu a.downloads,
 #webmailContent .menu a.search {
   display: inline-block;
   overflow: hidden;
@@ -611,6 +612,10 @@ form.search td input.email {
 #webmailContent .menu a.spam {
   width: 87px;
   background-image: url(../images/bt/bt_l_newfilter.gif);
+}
+#webmailContent .menu a.downloads {
+  width: 79px;
+  background-image: url(../images/bt/bt_m_local.gif);
 }
 #webmailContent .menu a.answer {
   width: 61px;

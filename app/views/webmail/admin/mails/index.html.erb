@@ -23,8 +23,8 @@
     ><a href="#unseenMails" class="unseen" title="未読にする">未読にする</a
     ><a href="#showLabelMenu" class="label" title="ラベル">ラベル</a
     ><% if Core.current_user.id == Core.user.id 
-    %><a href="#junkMails" class="spam" title="迷惑メール登録">迷惑メール登録</a>
-    <% end %>
+    %><a href="#junkMails" class="spam" title="迷惑メール登録">迷惑メール登録</a><% end
+    %><a href="#downloadsMails" class="downloads" title="ローカル保存">ローカル保存</a>
     <a href="#toggleSearchForm" class="search" title="検索">検索</a>
     <div id="labelMenu" class="popupMenu" style="display:none;width:100px;">
       <% @conf.mail_labels.each do |conf| %>
@@ -132,6 +132,10 @@ $(function() {
     if (confirm('迷惑メールに登録します。よろしいですか？')) { 
       post('<%=raw escape_javascript url_for(action: :junk) %>');
     }
+    return false;
+  });
+  $('a[href="#downloadsMails"]').on('click', function() {
+    post('<%=raw escape_javascript url_for(action: :downloads) %>');
     return false;
   });
   $('a[href="#toggleSearchForm"]').on('click', function() {

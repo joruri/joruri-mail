@@ -5,7 +5,7 @@ class Webmail::Admin::MailsController < Webmail::Controller::Admin::Base
 
   before_action :handle_mailto_scheme, if: -> { params[:src] == 'mailto' && params[:uri] }
   before_action :check_user_email, only: [:new, :create, :edit, :update, :answer, :forward]
-  before_action :check_posted_uids, only: [:move, :delete, :seen, :unseen, :junk]
+  before_action :check_posted_uids, only: [:move, :delete, :seen, :unseen, :junk, :downloads]
 
   before_action :set_conf, only: [:index, :show, :move]
   before_action :set_address_histories, only: [:index, :show, :move]
@@ -87,7 +87,7 @@ class Webmail::Admin::MailsController < Webmail::Controller::Admin::Base
       msg = @item.rfc822
       send_data(msg, filename: filename, type: 'message/rfc822', disposition: 'attachment')
     when params[:download] == 'all'
-      filename = sprintf("%07d_%s.zip", @item.uid, Util::File.filesystemize(@item.subject.presence || '件名なし', length: 100))
+      filename = "#{@item.filename_for_download}.zip"
       zipdata = @item.zip_attachments(encoding: request.user_agent =~ /Windows/ ? 'shift_jis' : 'utf-8')
       send_data(zipdata, type: 'application/zip', filename: filename, disposition: 'attachment')
     when params[:download]
@@ -450,6 +450,15 @@ class Webmail::Admin::MailsController < Webmail::Controller::Admin::Base
     end
 
     render layout: false
+  end
+
+  def downloads
+    uids = params[:item][:ids].keys.map(&:to_i).select(&:positive?)
+    return http_error if uids.blank?
+
+    filename = "#{@mailbox.title}_#{Time.now.strftime("%Y%m%d_%H%M%S")}.zip"
+    zipdata, count = @mailbox.compress_mails(uids, encoding: request.user_agent =~ /Windows/ ? 'shift_jis' : 'utf-8')
+    send_data(zipdata, type: 'application/zip', filename: filename, disposition: 'attachment')
   end
 
   def new_window?
