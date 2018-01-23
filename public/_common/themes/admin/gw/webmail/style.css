@@ -885,12 +885,13 @@ form.search td input.email {
 #mailContent #inlineContents ul {
   list-style-type: disc;
   margin: 12px 0 12px 0;
+  padding-left: 40px;
 }
 #mailContent #inlineContents ol {
   margin: 12px 0 12px 0;
+  padding-left: 40px;
 }
 #mailContent #inlineContents li {
-  margin-left: 40px;
   line-height: 1.2;
 }
 #mailContent .mailBody .recipientConfirm {
