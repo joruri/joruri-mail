@@ -95,32 +95,29 @@ class Webmail::Address < ApplicationRecord
     def to_csv(items)
       CSV.generate(encoding: 'utf-8', force_quotes: true) do |csv|
         csv <<  [
-          '表示名', '電子メール アドレス', '自宅の郵便番号', '自宅の都道府県', '自宅の市区町村',
-          '自宅の番地', '自宅電話番号 :', '自宅ファックス', '携帯電話 ', '個人 Web ページ',
-          '勤務先の郵便番号', '勤務先の都道府県', '勤務先の市区町村', '勤務先の番地', '勤務先電話番号',
-          '勤務先ファックス', '会社名', '役職', 'メモ'
+          '表示名', 'フリガナ', '並び順', '電子メール アドレス', '自宅の郵便番号', '自宅の住所',
+          '自宅電話番号 :', '自宅ファックス', '携帯電話 ', '個人 Web ページ',
+          '勤務先の郵便番号', '勤務先の住所', '勤務先電話番号',
+          '勤務先ファックス', '会社名', '会社名フリガナ', '役職', 'メモ'
         ]
         items.each do |item|
-          address = split_address(item.address)
-          company_address = split_address(item.company_address)
           csv << [
             item.name,               #表示名
+            item.kana,               #フリガナ
+            item.sort_no,            #並び順
             item.email,              #電子メールアドレス
             item.zip_code,           #自宅の郵便番号
-            address[0],              #自宅の都道府県
-            address[1],              #自宅の市区町村
-            address[2],              #自宅の番地
+            item.address,            #自宅の住所
             item.tel,                #自宅電話番号
             item.fax,                #自宅ファックス
             item.mobile_tel,         #携帯電話
             item.uri,                #個人 Web ページ
             item.company_zip_code,   #勤務先の郵便番号
-            company_address[0],      #勤務先の都道府県
-            company_address[1],      #勤務先の市区町村
-            company_address[2],      #勤務先の番地
+            item.company_address,    #勤務先の住所
             item.company_tel,        #勤務先電話番号
             item.company_fax,        #勤務先ファックス
             item.company_name,       #会社名
+            item.company_kana,       #会社名フリガナ
             item.official_position,  #役職
             item.memo,               #メモ
           ] 
@@ -134,22 +131,23 @@ class Webmail::Address < ApplicationRecord
         item = self.new(
           user_id:           Core.user.id,
           name:              data['表示名'].presence || [data['姓'], data['ミドル ネーム'], data['名']].join(' '),
+          kana:              data['フリガナ'],
+          sort_no:           data['並び順'],
           email:             data['電子メール アドレス'],
           zip_code:          data['自宅の郵便番号'],
-          address:           [data['自宅の都道府県'], data['自宅の市区町村'], data['自宅の番地']].join,
+          address:           data['自宅の住所'].presence || [data['自宅の都道府県'], data['自宅の市区町村'], data['自宅の番地']].join,
           tel:               data['自宅電話番号 :'],
           fax:               data['自宅ファックス'],
           mobile_tel:        data['携帯電話 '],
           uri:               data['個人 Web ページ'],
           company_zip_code:  data['勤務先の郵便番号'],
-          company_address:   [data['勤務先の都道府県'], data['勤務先の市区町村'], data['勤務先の番地']].join,
+          company_address:   data['勤務先の住所'].presence || [data['勤務先の都道府県'], data['勤務先の市区町村'], data['勤務先の番地']].join,
           company_tel:       data['勤務先電話番号'],
           company_fax:       data['勤務先ファックス'],
           company_name:      data['会社名'],
+          company_kana:      data['会社名フリガナ'],
           official_position: data['役職'],
-          memo:              data['メモ'],
-          kana:              "",
-          company_kana:      "",
+          memo:              data['メモ']
         )
         item.valid?
         items << item
