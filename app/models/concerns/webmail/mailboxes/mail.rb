@@ -50,4 +50,8 @@ module Webmail::Mailboxes::Mail
   def unflag_mails(uids, flags)
     Webmail::Mail.unflag_all(name, uids, flags)
   end
+
+  def compress_mails(uids, options = {})
+    Webmail::Mail.compress_mails(name, uids, options)
+  end
 end
