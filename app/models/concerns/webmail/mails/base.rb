@@ -224,7 +224,7 @@ module Webmail::Mails::Base
         @attachments << Sys::Lib::Mail::Attachment.new(
           seqno:             seqno,
           content_type:      part.mime_type || 'application/octet-stream',
-          name:              part.filename.strip,
+          name:              part.filename.force_encoding('utf-8').strip,
           body:              body,
           size:              body.bytesize,
           transfer_encoding: part.content_transfer_encoding

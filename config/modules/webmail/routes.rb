@@ -7,7 +7,7 @@ Joruri::Application.routes.draw do
       resources :mails, path: '*mailbox/mails' do
         collection do
           get :empty, :close, :reset_address_history, :star, :label
-          post :move, :delete, :seen, :unseen, :junk, :mobile_manage
+          post :move, :delete, :seen, :unseen, :junk, :downloads, :mobile_manage
         end
         member do
           get :edit, :download, :answer, :forward

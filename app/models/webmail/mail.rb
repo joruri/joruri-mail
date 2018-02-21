@@ -335,6 +335,10 @@ class Webmail::Mail
     mail
   end
 
+  def filename_for_download
+    sprintf("%07d_%s", uid, Util::File.filesystemize(subject.presence || '件名なし', length: 100))
+  end
+
   def zip_attachments(encoding: 'utf-8')
     filenames = attachments.map do |at|
       name = at.name
@@ -455,7 +459,8 @@ class Webmail::Mail
     end
 
     def load_from_cache(mailbox, uids)
-      nodes = Webmail::MailNode.where(user_id: Core.current_user.id, mailbox: mailbox, uid: uids).all
+      nodes = Webmail::MailNode.where(user_id: Core.current_user.id, mailbox: mailbox, uid: uids)
+                               .group(:uid).all
       return [] if nodes.blank?
 
       msgs = imap.uid_fetch(nodes.map(&:uid), ['UID', 'FLAGS']).to_a

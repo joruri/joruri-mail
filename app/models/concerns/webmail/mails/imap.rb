@@ -195,6 +195,23 @@ module Webmail::Mails::Imap
       items
     end
 
+    def fetch_each(uids, mailbox)
+      uids = Array(uids)
+      return [] if uids.blank?
+
+      imap.examine(mailbox) unless imap.opened?(mailbox)
+
+      uids.each_slice(10) do |sliced_uids|
+        items = imap.uid_fetch(sliced_uids, ['UID', 'RFC822']).to_a.map do |msg|
+                  item = self.new(msg.attr['RFC822'])
+                  item.uid     = msg.attr['UID'].to_i
+                  item.mailbox = mailbox
+                  item
+                end
+        items.each { |item| yield item }
+      end
+    end
+
     def move_all(from_mailbox, to_mailbox, uids)
       return 0 if from_mailbox == to_mailbox
       return 0 if uids.size == 0
@@ -236,6 +253,24 @@ module Webmail::Mails::Imap
       else
         move_to_by_copy(mailbox, uids)
       end
+    end
+
+    def compress_mails(mailbox, uids, encoding: 'shift_jis')
+      zip = ""
+      count = 0
+      Zip::Archive.open_buffer(zip, Zip::CREATE) do |ar|
+        fetch_each(uids, mailbox) do |mail|
+          begin
+            count += 1
+            filename = "#{mail.filename_for_download}.eml"
+            filename = filename.encode(encoding, undef: :replace, invalid: :replace, replace: '_')
+            ar.add_buffer(filename, mail.rfc822)
+          rescue Zip::Error => e
+            error_log e
+          end
+        end
+      end
+      return zip, count
     end
 
     private
