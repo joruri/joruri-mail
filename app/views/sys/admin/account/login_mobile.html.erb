@@ -14,7 +14,6 @@
   <h1><img src="/_common/themes/admin/gw/webmail/mobile/images/header-logo.jpg" alt="Joruri Mail"/></h1>
   <div class="notice"><%= flash[:notice] %></div>
   <%= form_tag do %>
-  <%= hidden_field_tag :uri, h(@uri.gsub(/(\?|&)mobile=top/, "").concat(($1?$1:"?")+"mobile=top")) %>
   <div class="fields">
     <font class="head">ユーザーID</font><br/>
     <%= text_field_tag 'account', '', class: "inputItem", istyle: "3", format: "*m", mode: "alphabet" %><br/>

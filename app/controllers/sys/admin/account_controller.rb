@@ -10,9 +10,9 @@ class Sys::Admin::AccountController < Sys::Controller::Admin::Base
       return redirect_to admin_uri
     end
 
-    @uri = params[:uri] || cookies[:sys_login_referrer] || admin_uri
-    @uri = @uri.gsub(/^http:\/\/[^\/]+/, '')
+    @uri = cookies[:sys_login_referrer] || admin_uri
     @uri = NKF::nkf('-w', @uri)
+    @uri = @uri.gsub(/(\?|&)mobile=top/, "").concat(($1?$1:"?")+"mobile=top") if request.mobile? || request.smart_phone?
     return unless request.post?
 
     if params[:password].to_s == 'p' + params[:account].to_s
