@@ -7,4 +7,4 @@
 <div class="personal">
   前回ログイン日時　<%= Core.user && Core.user.previous_login_date ? l(Core.user.previous_login_date) : '---' %>
 </div>
-<div class="logout"><a href="/_admin/logout">&gt;ログアウト</a></div>
+<div class="logout">&gt;<%= link_to 'ログアウト', admin_logout_path %></div>

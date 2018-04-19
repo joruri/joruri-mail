@@ -4,8 +4,8 @@ Rails.application.routes.draw do
 
   ## Admin
   match '_admin'                   => 'webmail/admin/mails#index', mailbox: 'INBOX', via: :get
-  match '_admin/login(.:format)'   => 'sys/admin/account#login', via: [:get, :post]
-  match '_admin/logout(.:format)'  => 'sys/admin/account#logout', via: [:get, :post]
+  match '_admin/login(.:format)'   => 'sys/admin/account#login', via: [:get, :post], as: :admin_login
+  match '_admin/logout(.:format)'  => 'sys/admin/account#logout', via: [:get, :post], as: :admin_logout
   match '_admin/account(.:format)' => 'sys/admin/account#info', via: :get
   match '_admin/sso'               => 'sys/admin/account#sso', via: [:get, :post]
   match '_admin/air_login'         => 'sys/admin/air#old_login', via: :get
