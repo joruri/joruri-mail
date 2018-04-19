@@ -172,7 +172,7 @@ class Webmail::Setting < ApplicationRecord
     def decrypt_field(decoded)
       if crypt_fields.present?
         crypt_fields.each do |field|
-          decoded[field] = Util::String::Crypt.decrypt_with_mime(decoded[field]) if decoded[field].present?
+          decoded[field] = Util::String::Crypt.decrypt_with_mime(decoded[field]).force_encoding('utf-8') if decoded[field].present?
         end
       end
       decoded
