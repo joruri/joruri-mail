@@ -28,7 +28,7 @@ class Sys::Controller::Admin::Base < ApplicationController
     return false if request.env['PATH_INFO'] =~ /^\/_admin\/login/
     uri  = request.env['PATH_INFO']
     uri += "?#{request.env['QUERY_STRING']}" if request.env['QUERY_STRING'].present?
-    cookies[:sys_login_referrer] = uri
+    cookies[:sys_login_referrer] = { value: uri, httponly: true }
     respond_to do |format|
       format.html { redirect_to('/_admin/login') }
       format.xml  { http_error 500, 'This is a secure page.' }

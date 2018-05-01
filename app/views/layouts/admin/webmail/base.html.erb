@@ -24,7 +24,7 @@
   <div class="menu">
     <span class="user"><%= Core.user_group.full_name if Core.user_group %>　<%= Core.user.name_with_account if Core.user %></span>
     <span class="link">
-      <a class="logout" href="/_admin/logout">ログアウト</a>
+      <%= link_to 'ログアウト', admin_logout_path, class: 'logout' %>
     </span>
     <% if Core.user && Core.user.has_auth?(:manager) %>
       <span class="sysLink"><a href="/_admin/sys" target="_blank">管理画面</a></span>

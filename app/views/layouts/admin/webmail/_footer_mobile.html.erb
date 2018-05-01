@@ -2,7 +2,7 @@
 <% if params[:mobile].blank? || params[:mobile] != 'top' %>
 <%= link_to 'トップページへ', webmail_mails_path(mailbox: 'INBOX', mobile: :top), accesskey: "0" %>
 <% end %>
-<%= link_to 'ログアウト', '/_admin/logout', class: 'logout' %>
+<%= link_to 'ログアウト', admin_logout_path, class: 'logout' %>
 </div>
 <br />
 <br />

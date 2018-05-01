@@ -5,14 +5,9 @@ class Sys::Admin::AccountController < Sys::Controller::Admin::Base
   def login
     admin_uri = '/webmail/INBOX/mails'
 
-    #return redirect_to(admin_uri) if logged_in?
-    if request.mobile? && params[:_session_id] == ''
-      return redirect_to admin_uri
-    end
-
-    @uri = params[:uri] || cookies[:sys_login_referrer] || admin_uri
-    @uri = @uri.gsub(/^http:\/\/[^\/]+/, '')
+    @uri = cookies[:sys_login_referrer] || admin_uri
     @uri = NKF::nkf('-w', @uri)
+    @uri = @uri.gsub(/(\?|&)mobile=top/, "").concat(($1?$1:"?")+"mobile=top") if request.mobile? || request.smart_phone?
     return unless request.post?
 
     if params[:password].to_s == 'p' + params[:account].to_s
@@ -53,7 +48,7 @@ class Sys::Admin::AccountController < Sys::Controller::Admin::Base
     cookies.delete :sys_login_referrer
 
     respond_to do |format|
-      format.html { redirect_to @uri }
+      format.html { redirect_to_with_session @uri }
       format.xml  { render(:xml => current_user.to_xml) }
     end
   end
@@ -111,6 +106,21 @@ class Sys::Admin::AccountController < Sys::Controller::Admin::Base
   end
 
   private
+
+  # jpmobile
+  def apply_trans_sid?
+    false
+  end
+
+  def redirect_to_with_session(url)
+    if request.mobile?
+      uri = Addressable::URI.parse(url)
+      uri.query_values = uri.query_values.merge(session_key.to_sym => jpmobile_session_id)
+      redirect_to uri.to_s
+    else
+      redirect_to url
+    end
+  end
 
   def load_sso_config
     to = Joruri.config.sso_settings.keys.detect { |key| key == params[:to].to_sym } || :gw
