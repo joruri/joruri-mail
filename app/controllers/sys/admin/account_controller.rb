@@ -2,6 +2,8 @@ class Sys::Admin::AccountController < Sys::Controller::Admin::Base
   protect_from_forgery except: [:login]
   layout 'base'
 
+  before_action :reset_unauthorized_session, only: [:login]
+
   def login
     admin_uri = '/webmail/INBOX/mails'
 
@@ -106,6 +108,10 @@ class Sys::Admin::AccountController < Sys::Controller::Admin::Base
   end
 
   private
+
+  def reset_unauthorized_session
+    reset_session if params[session_key]
+  end
 
   # jpmobile
   def apply_trans_sid?
