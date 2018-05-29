@@ -52,7 +52,7 @@ module Email
     end
 
     def quote_phrase(str)
-      unquoted = Mail::Encodings.unquote(str)
+      unquoted = Mail::Utilities.unquote(str)
       if unquoted =~ /[#{Regexp.escape(%Q|()<>[]:;@\\,."|)}[:cntrl:]]/
         Mail::Encodings.quote_phrase(unquoted)
       else
@@ -61,7 +61,7 @@ module Email
     end
 
     def unquote(str)
-      Mail::Encodings.unquote(str)
+      Mail::Utilities.unquote(str)
     end
   end
 end

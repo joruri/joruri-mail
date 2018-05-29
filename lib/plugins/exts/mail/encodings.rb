@@ -7,6 +7,7 @@ module Mail
       lines = collapse_adjacent_encodings(str)
 
       # patch start: chunk lines with same encoding
+      lines = lines.chunk { |value| value =~ ENCODED_VALUE; }.map { |_, array| array.join }
       lines = lines.map do |line|
         if line =~ FULL_ENCODED_VALUE
           values = line.split(FULL_ENCODED_VALUE).select(&:present?)
@@ -35,7 +36,7 @@ module Mail
       line.scan(/\=\?([^?]+)\?([QB])\?([^?]*?)\?\=/mi).map do |_, enc, str|
         case enc
         when *B_VALUES then str.unpack('m').first
-        when *Q_VALUES then str.unpack('M').first
+        when *Q_VALUES then str.gsub(/_/, '=20').unpack('M').first
         end
       end.join
     end
