@@ -7,7 +7,7 @@ module Mail
       lines = collapse_adjacent_encodings(str)
 
       # patch start: chunk lines with same encoding
-      lines = lines.chunk { |value| value =~ ENCODED_VALUE; }.map { |_, array| array.join }
+      lines = lines.chunk { |value| !!(value =~ ENCODED_VALUE) }.map { |_, array| array.join }
       lines = lines.map do |line|
         if line =~ FULL_ENCODED_VALUE
           values = line.split(FULL_ENCODED_VALUE).select(&:present?)
