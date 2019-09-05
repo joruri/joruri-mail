@@ -7,18 +7,18 @@ class System::ProductSynchro < System::Database
 
   def execute
     # 中間データ作成
-    return unless self.copy_ldap_temporary
+    return unless copy_ldap_temporary
     # バックアップ
-    return unless self.backup_table
+    return unless backup_table
     # 同期
-    self.synchronize
+    synchronize
   end
 
   private
 
   def copy_ldap_temporary
     update_attributes(state: 'temp')
-    
+
     @results = { group: 0, gerr: 0, user: 0, uerr: 0 }
 
     groups = System::LdapTemporary.where(version: version, parent_id: 0, data_type: 'group').order(:sort_no, :code)
@@ -129,7 +129,7 @@ class System::ProductSynchro < System::Database
       su.official_position = user.official_position
       su.assigned_job   = user.assigned_job
       su.group_s_name   = user.group_s_name
-      
+
       if su.save
         @results[:user] += 1
       else
