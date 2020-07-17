@@ -39,9 +39,7 @@ Make sure your environment is secure.
 
 ### Quick install
 
-Execute script below as root user:
-
-    export LANG=ja_JP.UTF-8; curl -L https://raw.githubusercontent.com/joruri/joruri-mail/master/doc/install_scripts/prepare.sh | bash
+Install script was expired and removed from repository.
 
 ### Manual install
 
