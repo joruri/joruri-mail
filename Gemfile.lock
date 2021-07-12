@@ -48,7 +48,8 @@ GEM
       i18n (~> 0.7)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
-    addressable (2.4.0)
+    addressable (2.8.0)
+      public_suffix (>= 2.0.2, < 5.0)
     arel (7.1.2)
     bower-rails (0.11.0)
     brakeman (3.4.0)
@@ -118,6 +119,7 @@ GEM
     premailer (1.8.7)
       css_parser (>= 1.4.5)
       htmlentities (>= 4.0.0)
+    public_suffix (4.0.6)
     rack (2.0.1)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -206,7 +208,7 @@ DEPENDENCIES
   active_hash (~> 1.4.1)
   activerecord-import (~> 0.15.0)
   activerecord-session_store (~> 1.0.0)
-  addressable (~> 2.4.0)
+  addressable (~> 2.8.0)
   bower-rails (~> 0.11.0)
   brakeman
   byebug
